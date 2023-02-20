@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  centos7:
+    hostname: centos
+    container_name: boostersCentOS
+    build:
+      context: .
+      dockerfile: ./centos7/Dockerfile
+    privileged: true
+    user: root
+    ports:
+      - "80:80"
+      - "8020:8020"
+      - "443:443"
+      - "3307:3306"
+      - "8080:8080"
+    volumes:
+      - ./centos7:/centos
+      - ./SOURCE:/home/centos/dev/stage/
+      - ./httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
+      - ./httpd/conf/extra:/etc/httpd/conf/extra
+      - ./mysql/my.cnf:/etc/my.cnf
+      - ./php/php.ini:/etc/php.ini
+    command: /sbin/init
