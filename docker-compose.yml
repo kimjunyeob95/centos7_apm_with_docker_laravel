@@ -3,6 +3,9 @@ version: "3.8"
 services:
   centos7:
     hostname: centos
+    mem_limit: 1000m
+    mem_reservation: 256M
+    cpus: 4
     container_name: boostersCentOS
     build:
       context: .
@@ -11,13 +14,11 @@ services:
     user: root
     ports:
       - "80:80"
-      - "8020:8020"
       - "443:443"
       - "3307:3306"
-      - "8080:8080"
+      - "5222:22"
+      - "3000:3000"
     volumes:
-      - ./centos7:/centos
-      - ./SOURCE:/home/centos/dev/stage/
       - ./httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
       - ./httpd/conf/extra:/etc/httpd/conf/extra
       - ./mysql/my.cnf:/etc/my.cnf

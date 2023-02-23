@@ -9,9 +9,16 @@ RUN yum install -y epel-release
 RUN yum provides netstat
 RUN yum install -y net-tools
 
-#nodjs8.x && git 설치
+# ssh 설치 && 환경설정
+RUN yum install -y net-tools vim openssh-server
+# vi /etc/ssh/sshd_config
+# port 22번 주석 해제
+# PermitRootLogin 부분을 yes로 변경
+# passwd root 명령어로 비밀번호 설정
+
+#nodjs12.x && git 설치
 RUN yum install -y gcc-c++ make
-RUN curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
+RUN curl -sL https://rpm.nodesource.com/setup_12.x | sudo -E bash -
 RUN yum install -y nodejs
 RUN yum install -y git
 
@@ -26,6 +33,10 @@ RUN sudo yum install -y https://rpms.remirepo.net/enterprise/remi-release-7.rpm
 RUN sudo yum-config-manager --enable remi-php72
 RUN sudo yum install -y php php-common php-fpm php-mysql php-pecl-memcache php-pecl-memcached php-gd php-mbstring php-mcrypt php-xml php-pecl-apc php-cli php-pear php-pdo
 RUN sudo yum install -y php-zip wget unzip
+
+#composer 설치
+RUN curl -sS https://getcomposer.org/installer | php
+RUN sudo mv composer.phar /usr/bin/composer
 
 # MYSQL5.7 설치
 RUN rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
@@ -48,16 +59,21 @@ COPY key.pem /etc/httpd/conf/server.key
 
 ADD /init.sh /
 RUN chmod +x /init.sh
+
+COPY SOURCE/web /home/centos/dev/stage/web
+COPY SOURCE/process /home/centos/dev/stage/process
+
 # 작업 경로 생성
 RUN ["/bin/bash","-c","sh /init.sh"]
-
 CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
-
-RUN systemctl start httpd
-RUN systemctl start mysqld
-RUN php artisan serve --host 0.0.0.0 --port 80
 
 EXPOSE 80
 EXPOSE 443
 EXPOSE 3306
-EXPOSE 8090
+EXPOSE 3000
+EXPOSE 22
+
+# systemctl restart sshd
+# systemctl start httpd
+# systemctl start mysqld
+# php artisan serve --host 0.0.0.0 --port 80
