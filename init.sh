@@ -3,9 +3,10 @@
 userName="stage";
 mkdir -p /home/daemon/mysql/data
 mkdir -p /home/centos/dev/${userName}/web /home/centos/dev/${userName}/crawling /home/centos/dev/${userName}/process /home/centos/dev/${userName}/settlement
+mkdir -p /home/centos/dev/${userName}/web
 chmod -R 777 /home/daemon/
 chmod -R 777 /home/centos/
-chmod -R 777 /home/centos/dev/${userName}
+chmod -R 777 /home/centos/dev/${userName}/
 
 echo -e "\n" >> ~/.bashrc
 echo "alias stage='cd /home/centos/dev/stage/'" >> ~/.bashrc

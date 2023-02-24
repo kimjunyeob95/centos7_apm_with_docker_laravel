@@ -17,6 +17,7 @@ SOURCE안의 디렉토리 별로 최신화 소스를 넣어주세요
 ## 3. ssh 설정
 ```bash
 # ssh 설치 && 환경설정
+$ su -
 $ vi /etc/ssh/sshd_config
 # Port 22번 주석 해제
 # PermitRootLogin 부분을 yes로 변경
@@ -27,15 +28,27 @@ $ passwd root
 ```bash
 # 1. 초기 비밀번호 확인
 $ grep 'temporary password' /var/log/mysqld.log
-# 2. mysql 접속 후  임시로 보안수준 높은 비밀번호로 변경
+# 2. mysql 접속 후 임시로 보안수준 높은 비밀번호로 변경
 mysql> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('qntmxkDB12!@');
-# 3. 변경 후 systemctl restart mysqld 재시작하면 설정해둔 my.cnf로 인해 보안수준 낮은 비밀번호로 변경
-systemctl restart mysqld
-# 4. 보안 낮은 비밀번호로 변경 가능
+mysql> flush privileges;
+# 3. 보안 수준 설정 및 쉬운 비밀번호로 변경
+SHOW VARIABLES LIKE 'validate_password%';
+mysql> use mysql;
+SET GLOBAL validate_password_policy=LOW;
+SET GLOBAL validate_password_length=4;
+SET GLOBAL validate_password_mixed_case_count=0;
+SET GLOBAL validate_password_number_count=0;
+SET GLOBAL validate_password_special_char_count=0;
+mysql> flush privileges;
+mysql> exit;
+mysql> mysql -u root -p
 mysql> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('1234');
-# 5. 외부 접근 허용 후 적용
+mysql> flush privileges;
+mysql> exit;
+# 4. 외부 접근 허용 후 적용
 mysql> grant all privileges on *.* to 'root'@'%' identified by '1234';
 mysql> flush privileges;
+# 5. mysql 비밀번호 설정
 ```
 ## 5. application 시작
 ```bash
@@ -47,9 +60,9 @@ $ systemctl start mysqld
 ## 6. laravel 실행
 ```bash
 $ composer install
-$ npm install --no-optional --no-shrinkwrap --no-package-lock
+$ npm install --save-dev
 $ npm run dev # 이 후 Front 소르를 개발 시 npm run watch로 실행
-$ php artisan serve --host 0.0.0.0 --port 80
+
 ```
 
 ## 7. HTTPS 설정
@@ -68,6 +81,7 @@ Centos7 Apache2.4 php7.2 Mysql5.7 node8.10
 4. 5222 SSH
 
 ## description
-local에 파일을 두고 docker와 volumes을 맞추고 싶었지만 vendor, node_modules 파일들 때문에 페이지 렌더링 속도가 매우 느려 ssh로 접속해서 작업하는 방향으로 선택했습니다.
-
+1. local에 파일을 두고 docker와 volumes을 맞추고 싶었지만 vendor, node_modules 파일들 때문에 페이지 렌더링 속도가 매우 느려 ssh로 접속해서 작업하는 방향으로 선택했습니다.
+2. SSL 적용 후에도 419 error 통신이면 라라벨 실행 경로를 777권한을고 아파치 재시작 해보세요.
+3. mysql 비밀번호 권한 설정도 my.cnf에 넣을려 했지만 그러면 mysql 설치가 안되어 설치 후 수동으로 권한 설정 따로 해줘야함
 
