@@ -19,6 +19,5 @@ services:
       - ./httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
       - ./httpd/conf/extra:/etc/httpd/conf/extra
       - ./mysql/my.cnf:/etc/my.cnf
-      # my.cnf는 설치가 다끝나고 붙여넣는다 안그러면 에러가 발생함
       - ./php/php.ini:/etc/php.ini
     command: /sbin/init

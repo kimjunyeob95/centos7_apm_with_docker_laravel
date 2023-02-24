@@ -23,6 +23,7 @@ $ vi /etc/ssh/sshd_config
 # PermitRootLogin 부분을 yes로 변경
 # passwd root 명령어로 비밀번호 설정
 $ passwd root
+$ systemctl restart sshd
 ```
 ## 4. mysql 설정
 ```bash
@@ -40,39 +41,44 @@ SET GLOBAL validate_password_mixed_case_count=0;
 SET GLOBAL validate_password_number_count=0;
 SET GLOBAL validate_password_special_char_count=0;
 mysql> flush privileges;
-mysql> exit;
-mysql> mysql -u root -p
 mysql> SET PASSWORD FOR 'root'@'localhost' = PASSWORD('1234');
 mysql> flush privileges;
-mysql> exit;
 # 4. 외부 접근 허용 후 적용
 mysql> grant all privileges on *.* to 'root'@'%' identified by '1234';
 mysql> flush privileges;
-# 5. mysql 비밀번호 설정
-```
-## 5. application 시작
-```bash
-$ systemctl restart sshd
-$ systemctl start httpd
-$ systemctl start mysqld
+mysql> exit;
+$ systemctl restart mysqld
 ```
 
-## 6. laravel 실행
-```bash
-$ composer install
-$ npm install --save-dev
-$ npm run dev # 이 후 Front 소르를 개발 시 npm run watch로 실행
-
-```
-
-## 7. HTTPS 설정
+## 5. HTTPS 설정
 1. localhost에서 SSL를 적용해야합니다. 도커로 CentOS 환경이 구성되면 직접 터미널에서 적용하시면 됩니다.
     https://seul96.tistory.com/348
+```bash
+~$ openssl genrsa -des3 -out server.key 2048 # PW:1q2w3e4r
+~$ openssl req -new -key server.key -out server.csr # 비밀번호 입력 후 그냥 엔터
+~$ cp server.key server.key.origin
+~$ openssl rsa -in server.key.origin -out server.key
+~$ openssl x509 -req -days 750 -in server.csr -signkey server.key -out server.crt
+~$ cp server.key /etc/httpd/conf/
+~$ cp server.crt /etc/httpd/conf/
+```
+
+## 6. apache 시작
+```bash
+$ systemctl start httpd
+```
+
+## 7. laravel 실행
+```bash
+~$ stage_w # /home/centos/dev/stage/web 경로로 이동
+web$ composer install
+web$ npm install --save-dev
+web$ npm run dev # 이 후 Front 소스를 개발 시 npm run watch로 실행
+```
 
 # ETC
-
 ## enviroment
-Centos7 Apache2.4 php7.2 Mysql5.7 node8.10
+Centos7 Apache2.4 php7.2 Mysql5.7 node8.10 python3.9.5
 
 ## port
 1. 80 웹서버
@@ -82,6 +88,6 @@ Centos7 Apache2.4 php7.2 Mysql5.7 node8.10
 
 ## description
 1. local에 파일을 두고 docker와 volumes을 맞추고 싶었지만 vendor, node_modules 파일들 때문에 페이지 렌더링 속도가 매우 느려 ssh로 접속해서 작업하는 방향으로 선택했습니다.
-2. SSL 적용 후에도 419 error 통신이면 라라벨 실행 경로를 777권한을고 아파치 재시작 해보세요.
+2. SSL 적용 후에도 419 error 통신이면 라라벨 실행 경로를 777권한으로 설정하고 아파치 재시작 해보세요.
 3. mysql 비밀번호 권한 설정도 my.cnf에 넣을려 했지만 그러면 mysql 설치가 안되어 설치 후 수동으로 권한 설정 따로 해줘야함
-
+4. 작업은 vscode 기준 remote-ssh 익스텐션을 이용해 개발을 하시면 됩니다.
