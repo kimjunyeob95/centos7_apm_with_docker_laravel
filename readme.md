@@ -91,3 +91,4 @@ Centos7 Apache2.4 php7.2 Mysql5.7 node8.10 python3.9.5
 2. SSL 적용 후에도 419 error 통신이면 라라벨 실행 경로를 777권한으로 설정하고 아파치 재시작 해보세요.
 3. mysql 비밀번호 권한 설정도 my.cnf에 넣을려 했지만 그러면 mysql 설치가 안되어 설치 후 수동으로 권한 설정 따로 해줘야함
 4. 작업은 vscode 기준 remote-ssh 익스텐션을 이용해 개발을 하시면 됩니다.
+5. 파이썬 크롤링을 위해 크롬 설치는 따로 해줘야합니다. https://passwd.tistory.com/entry/CentOS-Chrome-%EB%B0%8F-Selenium-%EC%84%A4%EC%B9%98
