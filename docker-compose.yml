@@ -21,6 +21,6 @@ services:
     volumes:
       - ./httpd/conf/httpd.conf:/etc/httpd/conf/httpd.conf
       - ./httpd/conf/extra:/etc/httpd/conf/extra
-      - ./mysql/my.cnf:/etc/my.cnf
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
       - ./php/php.ini:/etc/php.ini
     command: /sbin/init

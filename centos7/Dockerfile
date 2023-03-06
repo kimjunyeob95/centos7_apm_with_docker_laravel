@@ -13,8 +13,9 @@ ADD /init.sh /
 RUN chmod +x /init.sh
 RUN ["/bin/bash","-c","sh /init.sh"]
 
-# ssh 설치 && 환경설정
+# ssh 설치 && 환경설정 && crontab 설치
 RUN yum install -y net-tools vim openssh-server
+RUN yum install -y cronie
 
 # MYSQL5.7 설치
 RUN yum erase mariadb*
