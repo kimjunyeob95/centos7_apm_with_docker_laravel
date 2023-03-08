@@ -52,6 +52,12 @@ RUN yum install -y gcc-c++ make
 RUN curl -sL https://rpm.nodesource.com/setup_8.x | sudo -E bash -
 RUN yum install -y nodejs git openssl
 
+# jenkins && java 11 설치
+RUN sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+RUN sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+RUN yum install -y java-11-openjdk-devel.x86_64 && yum install -y jenkins
+
+
 # 최종 권한 부여
 ADD /finnaly.sh /
 RUN chmod +x /finnaly.sh
@@ -60,7 +66,11 @@ RUN ["/bin/bash","-c","sh /finnaly.sh"]
 EXPOSE 80
 EXPOSE 443
 EXPOSE 3306
-EXPOSE 3000
 EXPOSE 22
+EXPOSE 3000
+EXPOSE 8080
+EXPOSE 8100
+EXPOSE 8200
+EXPOSE 8300
 
 CMD ["/usr/sbin/httpd","-D","FOREGROUND"]
